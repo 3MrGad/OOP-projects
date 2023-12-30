@@ -1,0 +1,304 @@
+#include<iostream>
+#include <fstream>
+#include<vector>
+#include<string>
+using namespace std;
+class integratedAssembly{
+protected:
+    vector<pair<string,pair<string,double>>>vec;
+public:
+    integratedAssembly()
+    {
+        vec.push_back({"HP", {"AMD RYZEN 5 5500 , ASUS DUAL GEFORCE RTX 3050 V2 OC EDITION 8GB", 2.189}});
+        vec.push_back({"DELL", {"Motherboard Z790 , CPU I7-14700KF , NVIDIA GeForce RTX 4060 TI 16GB , RAM 16GB , SSD 1TB M.2", 5.109}});
+        vec.push_back({"ASUS",{"Motherboard Z790 , CPU I5-14600KF , NVIDIA GeForce RTX 4070 12GB , RAM 16GB , SSD 1TB M.2 , Windows 10 PRO",4.823 }});
+        vec.push_back({"LENOVO",{"Motherboard B760 , CPU I5-13400F , NVIDIA GeForce RTX 4060 TI 8GB , RAM 16GB , SSD 1TB M.2 , Windows 10 PRO", 3.189}});
+        vec.push_back({"MSI", {" Motherboard Z790 , CPU I5-14600KF , NVIDIA GeForce RTX 4070 TI 12GB , RAM 16GB , SSD 1TB M.2 , Windows 10 PRO", 9.189}});
+    }
+    void printVector() {
+        for (int i=0 ; i<vec.size() ; i++) {
+            cout << "Brand: " << vec[i].first <<'\n'<< "Specifications: " << vec[i].second.first << endl<<"Price: " << vec[i].second.second <<' $'<< endl;
+            cout << "------------------------------------------------------------------------------------------------------------------------------------\n";
+        }
+        //cout<<"\n======================================================================\n";
+    }
+};
+class separatedAssembly{
+protected:
+    vector<pair<string,double>>myvec;
+public:
+    separatedAssembly()
+    {
+        myvec.push_back({"RAM 4 GIGA",550});
+        myvec.push_back({"RAM 8 GIGA",1100});
+        myvec.push_back({"RAM 16 GIGA",2000});
+        myvec.push_back({"RAM 32 GIGA",4000});
+
+
+
+        myvec.push_back({"GTX 1650",6500});
+        myvec.push_back({"GTX 1660 Super",7550});
+        myvec.push_back({"RTX 3070",20000});
+        myvec.push_back({"RTX 4090 Ti",30000});
+
+
+
+    }
+    void printVector(){
+        cout<< "\nComponent: \t\t" <<"Price: \t\t";
+        cout<< "\n---------- \t\t" <<"----- \t\t\n";
+        for (int i=0 ; i<myvec.size() ; i++) {
+            cout << myvec[i].first<<"\t\t" << myvec[i].second <<" $\t\t"<< "\n\n";
+        }
+        cout<<"\n======================================================================\n";
+    }
+};
+class Choice:public separatedAssembly,public integratedAssembly
+{
+public:
+    int choice;
+    int n;
+    vector<pair<string,int>>shoppingList;
+    void Choose(){
+        cin>>choice;
+        if (choice == 1) {
+            integratedAssembly::printVector();
+            cout<<"Enter \"done\" to finish selecting \n";
+            cout<<"===================================\n";
+            string pc;
+            while(pc!="done"){
+                cout<<"Enter the name of PC that you want: ";
+                cin>>pc;
+                if(pc=="done"){break;}
+                cout<<"How many computers do you want: " ;
+                cin>>n;
+                for(int a=0 ; a<vec.size() ; a++){
+                    if(pc==vec[a].first){
+                        cout<<"Item has been added successfully: "<<(vec[a].second.second)*n<<" $\n";
+                        shoppingList.push_back({vec[a].first,n});
+                    }
+                }
+            }
+        }
+        else if (choice == 2) {
+            separatedAssembly::printVector();
+            cout<<"Enter \"done\" to finish selecting \n";
+            string piece;
+            while(piece!="done"){
+                cout<<"Enter the name of piece that you want: ";
+                cin.ignore();
+                getline(cin,piece);
+                if(piece=="done"){break;}
+                cout<<"How many pieces do you want: " ;
+                cin>>n;
+                for(int i=0 ; i<myvec.size() ; i++){
+                    if(piece==myvec[i].first){
+                        cout<<"Item has been added successfully: "<<(myvec[i].second)*n<<" $\n";
+                        shoppingList.push_back({myvec[i].first,n});
+                    }
+                }
+            }
+        }
+        else {
+            cout << "Invalid choice.\n";
+        }
+        cout<<"\n======================================================================\n";
+    }
+};
+class displayList : public Choice{
+public:
+    void printList(){
+        cout<<"Your shopping list: \n";
+        cout<<"--------------------\n";
+        for(int i=0 ; i<shoppingList.size() ; i++)
+        {cout<<shoppingList[i].second<<" of "<<shoppingList[i].first<<'\n';}
+    }
+};
+
+
+
+class receipt : public displayList
+{
+public:
+    double allTotal=0.0;
+    void showReceipt()
+    {
+        allTotal=0.0;
+        cout << "Product" << "\t\t" << "Price" << "\t\t" << "Qty" << "\t\t" << "Total" << endl;
+        cout << "---------" << "\t" << "------" << "\t\t" <<"----" << "\t\t" << "-----" << endl;
+        if(choice==1)
+        {
+            for (int i= 0; i<shoppingList.size(); i++)
+            {
+                for(int j=0; j < vec.size(); j++)
+                {
+                    if(vec[j].first==shoppingList[i].first){
+                        cout<<shoppingList[i].first<<"\t\t"<<vec[j].second.second<<"\t\t"<<shoppingList[i].second<<"\t\t"<<(vec[j].second.second*shoppingList[i].second)<<'$'<<endl;
+                        allTotal+=(vec[j].second.second*shoppingList[i].second);
+                        continue;
+                    }
+                }
+            }
+        }
+        else
+        {
+            for (int i= 0; i<shoppingList.size(); i++)
+            {
+                for(int j=0; j < myvec.size(); j++)
+                {
+                    if(myvec[j].first==shoppingList[i].first)
+                    {
+                        cout<<shoppingList[i].first<<"  \t"<<myvec[j].second<<"\t\t "<<shoppingList[i].second<<"\t\t "<<(myvec[j].second*shoppingList[i].second)<<'$'<<endl;
+                        allTotal+= (myvec[j].second*shoppingList[i].second);
+                        continue;
+                    }
+                }
+            }
+        }
+        cout<<"------------------------------------------------------------------\n";
+        cout<<"You will pay: "<<allTotal<<'$'<<endl;
+    }
+};
+class File:public receipt{
+public:
+    void F()
+    {
+        int check; //check if you have an account or not
+        cout<<"1.Create Email\n"<<"2.Login\n";
+        cout<<"Enter choice:";
+        cin>>check;
+        string Email,password;
+        cout<<"Enter your email\n";
+        cin>>Email;
+        cout<<"Enter your password\n";
+        cin>>password;
+        fstream file;
+        file.open("accounts.txt",ios::binary|ios::in|ios::out|ios::app);
+        if(file.good()){
+            if(check==1){
+                file<<Email<<endl<<password<<endl;
+                cout << "Account created successfully.\n";
+            }
+            else{
+                bool found=false;
+                string checkEmail, checkPass;
+                while(file>>checkEmail>>checkPass){
+                    if(checkEmail==Email && checkPass==password){
+                        found=true;
+                        break;
+                    }
+                }
+                if(found){cout<<"Login successful.\n";}
+                else {
+                    cout << "Invalid email or password.\n";
+                }
+            }
+        }
+        else{cout << "Error while opening the file.\n";}
+        file.close();
+    }};
+class Delete :public File
+{
+public:
+    string item ;
+    int n_delete;
+    void De()
+    {
+        printList();
+        cout<<"==========================\n";
+        cout<<"Enter item you want to delete: ";
+        cin>>item;
+        cout<<"What is the quantity you want to delete from this product: ";
+        cin>> n_delete;
+        for(int i=0 ; i<shoppingList.size() ; i++){
+            if(item==shoppingList[i].first){
+                if(n_delete==shoppingList[i].second){
+                    shoppingList.erase(shoppingList.begin()+i);
+                }
+                else if(n_delete>shoppingList[i].second){cout<<"Error in quantity\n";}
+                else{
+                    shoppingList[i].second -= n_delete;
+                    for(int i=0 ; i<vec.size() ; i++)
+                    {
+                        if(item==vec[i].first){
+                            allTotal-=vec[i].second.second*n_delete;
+                            break;
+                        }
+                    }
+                }
+                break;
+            }
+        }
+    }
+};
+void displayMainInterface()
+{
+    cout << "\nMain interface:\n";
+    cout << "1. Create Account or login\n";
+    cout << "2. show integrated assembly\n";
+    cout << "3. show seperated assembly\n";
+    cout << "4. Choose a product\n";
+    cout << "5. Display your shopping list\n";
+    cout << "6. Delete a product\n";
+    cout << "7. confirm \n";
+    cout << "8. Exit\n";
+}
+int main() {
+    int k=0;// for the first costumar and it will be increased till it will be 4
+    int e=5; //number of costumars
+    Delete costumar[e];// array of object to store costumars
+    while(k!=5){//loop to do all the below process on every customer
+    Delete costumar[k];//Class Delete this class include everything so we make it the main class
+    //----------------------------------------------------------------------
+    int CHoice;//to choose from the main menu
+    cout<<"\t\t\t\t\t Welcome to our Hardware Store <3 \n"<<endl;
+    cout<<"\t\t\t\t\t -------------------------------- \n"<<endl;
+    do{
+        displayMainInterface();
+        cout<<"Enter you choice: ";
+        cin>>CHoice;
+        switch(CHoice){
+            case 1:
+               costumar[e].F();
+                break;
+            case 2:
+                cout<<"==============================\n";
+                costumar[k].integratedAssembly::printVector();
+                break;
+            case 3:
+
+                cout<<"==============================\n";
+                costumar[k].separatedAssembly::printVector();
+                break;
+            case 4:
+                cout<<"==============================\n";
+                cout<<"Please the key (1)to confirm that you will buy the integrated assebly and (2) to confirm you\nwill by the seperated assembely: ";
+                costumar[k].Choose();
+                break;
+            case 5:
+                cout<<"==============================\n";
+                costumar[k].printList();
+                break;
+            case 6:
+                cout<<"==============================\n";
+                costumar[k].De();
+                break;
+            case 7:
+                cout<<"==============================\n";
+                costumar[k].showReceipt();
+                cout<<"Thank you for using our store! \n";
+                break;
+            case 8:
+                cout<<"Thank you for using our store! \n";
+                return 0;
+            default:
+                cout<<"Invalid choice! Please try again. \n";
+                return 0;
+
+
+
+        }
+    }while(CHoice != 9 && CHoice !=10);
+    k++;}
+    return 0;
+}
